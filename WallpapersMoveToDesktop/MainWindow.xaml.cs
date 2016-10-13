@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace WallpapersMoveToDesktop
 {
@@ -134,6 +135,32 @@ namespace WallpapersMoveToDesktop
                             }
                             File.Copy(oldFileName, newFileName);
                             AddToListExistImages(image);
+
+                            var count = VisualTreeHelper.GetChildrenCount(groupBox);
+                            for (int index = 0; index < count; index++)
+                            {
+                                var parent = VisualTreeHelper.GetParent(groupBox);
+
+
+                                var child = VisualTreeHelper.GetChild(groupBox, index);
+                                var canvas = child as Canvas;
+                                if (canvas != null)
+                                {
+                                    BitmapImage bitmapImage = new BitmapImage();
+                                    var thumbnailImage = image.GetThumbnailImage(20, 20, () => false, IntPtr.Zero);
+
+                                    using (var ms = new MemoryStream())
+                                    {
+                                        bitmapImage.BeginInit();
+                                        thumbnailImage.Save(ms, thumbnailImage.RawFormat);
+                                        bitmapImage.StreamSource = ms;
+                                        bitmapImage.EndInit();
+                                    }
+
+                                    var im = new System.Windows.Controls.Image() { Source = bitmapImage };
+                                    canvas.Children.Add(im);
+                                }
+                            }
 
                             listView.Items.Add(newFileName);
                         }
