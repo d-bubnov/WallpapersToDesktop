@@ -26,3 +26,6 @@ C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Debug
 C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.csproj.GenerateResource.Cache
 C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.exe
 C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.pdb
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\bin\Debug\WallpapersMoveToDesktop.exe.config
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.exe
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.pdb

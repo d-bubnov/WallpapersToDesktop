@@ -75,7 +75,7 @@ namespace WallpapersMoveToDesktop
                             listView.Items.Add(newFileName);
                         }
                     }
-                    catch (Exception exception)
+                    catch (Exception)
                     {
                         //MessageBox.Show(exception.Message);
                     }

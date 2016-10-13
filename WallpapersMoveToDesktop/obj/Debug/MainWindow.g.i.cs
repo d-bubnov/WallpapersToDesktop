@@ -64,14 +64,6 @@ namespace WallpapersMoveToDesktop {
         #line default
         #line hidden
         
-        
-        #line 24 "..\..\MainWindow.xaml"
-        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
-        internal System.Windows.Controls.Button button2;
-        
-        #line default
-        #line hidden
-        
         private bool _contentLoaded;
         
         /// <summary>
@@ -127,15 +119,6 @@ namespace WallpapersMoveToDesktop {
             
             #line 23 "..\..\MainWindow.xaml"
             this.button1.Click += new System.Windows.RoutedEventHandler(this.Button1_OnClick);
-            
-            #line default
-            #line hidden
-            return;
-            case 5:
-            this.button2 = ((System.Windows.Controls.Button)(target));
-            
-            #line 24 "..\..\MainWindow.xaml"
-            this.button2.Click += new System.Windows.RoutedEventHandler(this.button2_Click);
             
             #line default
             #line hidden
