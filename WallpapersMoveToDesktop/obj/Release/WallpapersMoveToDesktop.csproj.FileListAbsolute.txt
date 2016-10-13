@@ -1,0 +1,14 @@
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\bin\Release\WallpapersMoveToDesktop.exe.config
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\WallpapersMoveToDesktop.csprojResolveAssemblyReference.cache
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\MainWindow.g.cs
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\App.g.cs
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\WallpapersMoveToDesktop_MarkupCompile.cache
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\WallpapersMoveToDesktop_MarkupCompile.lref
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\MainWindow.baml
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\WallpapersMoveToDesktop.g.resources
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\WallpapersMoveToDesktop.pdb
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\bin\Release\WallpapersMoveToDesktop.exe
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\bin\Release\WallpapersMoveToDesktop.pdb
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\WallpapersMoveToDesktop.Properties.Resources.resources
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\WallpapersMoveToDesktop.csproj.GenerateResource.Cache
+C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Release\WallpapersMoveToDesktop.exe
