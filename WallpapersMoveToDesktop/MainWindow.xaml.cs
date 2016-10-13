@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows;
@@ -9,12 +10,19 @@ namespace WallpapersMoveToDesktop
 {
     public partial class MainWindow : Window
     {
+        #region Fields and Properties
+
         private System.Windows.Forms.NotifyIcon _notifyIcon;
+        private List<string> _existsImages = new List<string>();
+        private readonly string _backupDir = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\Wallpapers");
+
+        #endregion
 
         public MainWindow()
         {
             InitializeComponent();
             SetIconToMainApplication();
+            LoadExistsImages();
         }
 
         private void SetIconToMainApplication()
@@ -27,6 +35,61 @@ namespace WallpapersMoveToDesktop
                 this.Show();
                 this.WindowState = WindowState.Normal;
             };
+        }
+
+        private void LoadExistsImages()
+        {
+            _existsImages.Clear();
+
+            DirectoryInfo directoryInfo = new DirectoryInfo(_backupDir);
+            FileInfo[] fileInfos = directoryInfo.GetFiles();
+
+            foreach (var fileInfo in fileInfos)
+            {
+                try
+                {
+                    var fileName = Path.Combine(_backupDir, fileInfo.Name);
+                    var image = System.Drawing.Image.FromFile(fileName);
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        image.Save(memoryStream, image.RawFormat);
+                        _existsImages.Add(Convert.ToBase64String(memoryStream.ToArray()));
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+        }
+
+        private void AddToListExistImages(System.Drawing.Image image)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                image.Save(memoryStream, image.RawFormat);
+                _existsImages.Add(Convert.ToBase64String(memoryStream.ToArray()));
+            }
+        }
+
+        private bool ContainsImage(System.Drawing.Image originalImage)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                try
+                {
+                    originalImage.Save(memoryStream, originalImage.RawFormat);
+                    var stringImage = Convert.ToBase64String(memoryStream.ToArray());
+                    if (!_existsImages.Contains(stringImage))
+                        return false;
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            return true;
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -46,17 +109,15 @@ namespace WallpapersMoveToDesktop
 
             if (userProfile != null)
             {
-                var backupDir = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\Desktop\Wallpapers"); 
                 var sourceDir = string.Format(userProfile + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
-
                 DirectoryInfo directoryInfo = new DirectoryInfo(sourceDir);
                 FileInfo[] fileInfos = directoryInfo.GetFiles();
             
                 foreach (var fileInfo in fileInfos)
                 {
-                    if (!Directory.Exists(backupDir))
+                    if (!Directory.Exists(_backupDir))
                     {
-                        Directory.CreateDirectory(backupDir);
+                        Directory.CreateDirectory(_backupDir);
                     }
                 
                     try
@@ -66,12 +127,14 @@ namespace WallpapersMoveToDesktop
 
                         if (image.Height >= 1080 && image.Width >= 1920)
                         {
-                            var newFileName = Path.Combine(backupDir, string.Format(fileInfo.Name + ".jpeg"));
-                            if (File.Exists(newFileName))
+                            var newFileName = Path.Combine(_backupDir, string.Format(fileInfo.Name + ".jpeg"));
+                            if (File.Exists(newFileName) || ContainsImage(image))
                             {
                                 continue;
                             }
                             File.Copy(oldFileName, newFileName);
+                            AddToListExistImages(image);
+
                             listView.Items.Add(newFileName);
                         }
                     }

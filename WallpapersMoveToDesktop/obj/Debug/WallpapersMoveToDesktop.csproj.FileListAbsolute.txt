@@ -29,3 +29,14 @@ C:\Users\Denis\Desktop\WallpapersMoveToDesktop\WallpapersMoveToDesktop\obj\Debug
 C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\bin\Debug\WallpapersMoveToDesktop.exe.config
 C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.exe
 C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.pdb
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\bin\Debug\WallpapersMoveToDesktop.exe
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\bin\Debug\WallpapersMoveToDesktop.pdb
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.csprojResolveAssemblyReference.cache
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\MainWindow.g.cs
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\App.g.cs
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop_MarkupCompile.cache
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop_MarkupCompile.lref
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\MainWindow.baml
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.g.resources
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.Properties.Resources.resources
+C:\Users\Denis\Documents\Git\WallpapersToDesktop\WallpapersMoveToDesktop\obj\Debug\WallpapersMoveToDesktop.csproj.GenerateResource.Cache
