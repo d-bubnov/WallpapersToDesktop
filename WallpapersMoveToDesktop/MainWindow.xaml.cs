@@ -174,17 +174,16 @@ namespace WallpapersMoveToDesktop
 
                             if (canvas != null)
                             {
-                                Uri uri = new Uri(newFileName);
-                                BitmapImage bitmapImage = new BitmapImage();
-                                bitmapImage.BeginInit();
-                                bitmapImage.UriSource = uri;
-                                bitmapImage.DecodePixelWidth = 80;
-                                bitmapImage.DecodePixelHeight = 45;
-                                bitmapImage.EndInit();
+                                BitmapImage source = new BitmapImage();
+                                source.BeginInit();
+                                source.UriSource = new Uri(newFileName);
+                                source.DecodePixelWidth = 80;
+                                source.DecodePixelHeight = 45;
+                                source.EndInit();
 
-                                var element = new System.Windows.Controls.Image() { Source = bitmapImage };
+                                var element = new System.Windows.Controls.Image() { Source = source };
 
-                                var left = indexImage * 80 + 1 * (indexImage + 1) - (indexImage / 10) * 810;
+                                var left = indexImage * 80 + 1 * (indexImage + 1) - (indexImage / 10) * 81 * 10;
                                 var top = (indexImage / 10) * 45 + 1 * (indexImage / 10 + 1);
 
                                 Canvas.SetLeft(element, left);
