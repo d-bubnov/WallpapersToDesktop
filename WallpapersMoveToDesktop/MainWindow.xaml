@@ -5,24 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WallpapersMoveToDesktop"
         mc:Ignorable="d"
-        Title="Move Wallpapers To Desktop" Height="458.854" Width="459.83" Closing="Window_Closing">
-    <Grid Margin="0,0,2,0">
+        Title="Move Wallpapers To Desktop" Height="594.117" Width="948.858" Closing="Window_Closing">
+    <Grid Margin="0,0,-8,0">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="160*"/>
-            <ColumnDefinition Width="282*"/>
-            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="358*"/>
+            <ColumnDefinition Width="75*"/>
+            <ColumnDefinition Width="556*"/>
+            <ColumnDefinition Width="16*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="button" Content="Import Images" HorizontalAlignment="Left" Margin="10,151,0,0" VerticalAlignment="Top" Width="174" Click="button_Click" Grid.ColumnSpan="2"/>
-        <ListView x:Name="listView" HorizontalAlignment="Left" Height="125" Margin="10,10,0,0" VerticalAlignment="Top" Width="429" Grid.ColumnSpan="2">
+        <Button x:Name="button" Content="Import Images" HorizontalAlignment="Left" Margin="10,528,0,0" VerticalAlignment="Top" Width="187" Click="button_Click"/>
+        <ListView x:Name="listView" HorizontalAlignment="Left" Height="200" Margin="10,313,0,0" VerticalAlignment="Top" Width="860" Grid.ColumnSpan="3">
             <ListView.View>
                 <GridView>
                     <GridViewColumn/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="button1" Content="Rotate" Grid.Column="1" HorizontalAlignment="Left" Margin="120,151,0,0" VerticalAlignment="Top" Width="75" Click="Button1_OnClick"/>
-        <GroupBox x:Name="groupBox" Header="GroupBox" HorizontalAlignment="Left" Margin="10,199,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="219" Width="429">
-            <Canvas HorizontalAlignment="Left" Height="179" Margin="10,10,0,0" VerticalAlignment="Top" Width="398"/>
+        <Button x:Name="button1" Content="Rotate" Grid.Column="1" HorizontalAlignment="Left" Margin="0,528,0,0" VerticalAlignment="Top" Width="75" Click="Button1_OnClick" Grid.ColumnSpan="2"/>
+        <GroupBox x:Name="groupBox" Header="Загруженные изображения" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3" Height="290" Width="860">
+            <Grid HorizontalAlignment="Left" Height="250" Margin="10,10,-2,-12" VerticalAlignment="Top" Width="830" RenderTransformOrigin="0.501,0.167">
+                <Canvas HorizontalAlignment="Left" Height="230" Margin="10,10,0,0" VerticalAlignment="Top" Width="810"/>
+            </Grid>
         </GroupBox>
 
     </Grid>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -93,6 +94,37 @@ namespace WallpapersMoveToDesktop
             return true;
         }
 
+        public static List<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null)
+                return null;
+
+            List<T> foundChilds = new List<T>();
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+
+            for (int index = 0; index < childrenCount; index++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, index);
+                T childType = child as T;
+                if (childType == null)
+                {
+                    var result = FindVisualChildren<T>(child);
+                    if (result.Any())
+                    {
+                        foundChilds.AddRange(result);
+                        break;
+                    }
+                }
+                else
+                {
+                    foundChilds.Add((T)child);
+                }
+            }
+            return foundChilds;
+        }
+
+
+
         protected override void OnStateChanged(EventArgs e)
         {
             if (WindowState == System.Windows.WindowState.Minimized)
@@ -113,7 +145,9 @@ namespace WallpapersMoveToDesktop
                 var sourceDir = string.Format(userProfile + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
                 DirectoryInfo directoryInfo = new DirectoryInfo(sourceDir);
                 FileInfo[] fileInfos = directoryInfo.GetFiles();
-            
+                int indexImage = 0;
+
+
                 foreach (var fileInfo in fileInfos)
                 {
                     if (!Directory.Exists(_backupDir))
@@ -136,38 +170,37 @@ namespace WallpapersMoveToDesktop
                             File.Copy(oldFileName, newFileName);
                             AddToListExistImages(image);
 
-                            var count = VisualTreeHelper.GetChildrenCount(groupBox);
-                            for (int index = 0; index < count; index++)
+                            var canvas = FindVisualChildren<Canvas>(groupBox).FirstOrDefault();
+
+                            if (canvas != null)
                             {
-                                var parent = VisualTreeHelper.GetParent(groupBox);
+                                Uri uri = new Uri(newFileName);
+                                BitmapImage bitmapImage = new BitmapImage();
+                                bitmapImage.BeginInit();
+                                bitmapImage.UriSource = uri;
+                                bitmapImage.DecodePixelWidth = 80;
+                                bitmapImage.DecodePixelHeight = 45;
+                                bitmapImage.EndInit();
 
+                                var element = new System.Windows.Controls.Image() { Source = bitmapImage };
 
-                                var child = VisualTreeHelper.GetChild(groupBox, index);
-                                var canvas = child as Canvas;
-                                if (canvas != null)
-                                {
-                                    BitmapImage bitmapImage = new BitmapImage();
-                                    var thumbnailImage = image.GetThumbnailImage(20, 20, () => false, IntPtr.Zero);
+                                var left = indexImage * 80 + 1 * (indexImage + 1) - (indexImage / 10) * 810;
+                                var top = (indexImage / 10) * 45 + 1 * (indexImage / 10 + 1);
 
-                                    using (var ms = new MemoryStream())
-                                    {
-                                        bitmapImage.BeginInit();
-                                        thumbnailImage.Save(ms, thumbnailImage.RawFormat);
-                                        bitmapImage.StreamSource = ms;
-                                        bitmapImage.EndInit();
-                                    }
-
-                                    var im = new System.Windows.Controls.Image() { Source = bitmapImage };
-                                    canvas.Children.Add(im);
-                                }
+                                Canvas.SetLeft(element, left);
+                                Canvas.SetTop(element, top);
+                                
+                                canvas.Children.Add(element);
+                                indexImage++;
                             }
+                            
 
                             listView.Items.Add(newFileName);
                         }
                     }
-                    catch (Exception)
+                    catch (Exception exception)
                     {
-                        //MessageBox.Show(exception.Message);
+                       // MessageBox.Show(exception.Message);
                     }
                 }
             }
