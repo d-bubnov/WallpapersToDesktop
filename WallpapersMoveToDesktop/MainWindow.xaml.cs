@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -17,6 +18,8 @@ namespace WallpapersMoveToDesktop
         private System.Windows.Forms.NotifyIcon _notifyIcon;
         private List<string> _existsImages = new List<string>();
         private readonly string _backupDir = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\Wallpapers");
+        private readonly Timer _timer = new Timer(30 * 60 * 1000); // 30 minutes
+        int _lastHour = DateTime.Now.Hour;
 
         #endregion
 
@@ -25,6 +28,9 @@ namespace WallpapersMoveToDesktop
             InitializeComponent();
             SetIconToMainApplication();
             LoadExistsImages();
+
+            _timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            _timer.Start();            
         }
 
         private void SetIconToMainApplication()
@@ -37,6 +43,86 @@ namespace WallpapersMoveToDesktop
                 this.Show();
                 this.WindowState = WindowState.Normal;
             };
+        }
+
+        private void ExecutingLoadingImagesEveryHour()
+        {
+            button.IsEnabled = false;
+            listView.Items.Clear();
+
+            var userProfile = System.Environment.GetEnvironmentVariable("USERPROFILE");
+
+            if (userProfile != null)
+            {
+                var sourceDir = string.Format(userProfile + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
+                DirectoryInfo directoryInfo = new DirectoryInfo(sourceDir);
+                FileInfo[] fileInfos = directoryInfo.GetFiles();
+                int indexImage = 0;
+                
+                foreach (var fileInfo in fileInfos)
+                {
+                    if (!Directory.Exists(_backupDir))
+                    {
+                        Directory.CreateDirectory(_backupDir);
+                    }
+
+                    try
+                    {
+                        var oldFileName = Path.Combine(sourceDir, fileInfo.Name);
+                        var image = System.Drawing.Image.FromFile(oldFileName);
+
+                        if (image.Height >= 1080 && image.Width >= 1920)
+                        {
+                            var newFileName = Path.Combine(_backupDir, string.Format(fileInfo.Name + ".jpeg"));
+                            if (File.Exists(newFileName) || ContainsImage(image))
+                            {
+                                continue;
+                            }
+                            File.Copy(oldFileName, newFileName);
+                            AddToListExistImages(image);
+
+                            var canvas = FindVisualChildren<Canvas>(groupBox).FirstOrDefault();
+
+                            if (canvas != null)
+                            {
+                                BitmapImage source = new BitmapImage();
+                                source.BeginInit();
+                                source.UriSource = new Uri(newFileName);
+                                source.DecodePixelWidth = 80;
+                                source.DecodePixelHeight = 45;
+                                source.EndInit();
+
+                                var element = new System.Windows.Controls.Image() { Source = source };
+
+                                var left = indexImage * 80 + 1 * (indexImage + 1) - (indexImage / 10) * 81 * 10;
+                                var top = (indexImage / 10) * 45 + 1 * (indexImage / 10 + 1);
+
+                                Canvas.SetLeft(element, left);
+                                Canvas.SetTop(element, top);
+
+                                canvas.Children.Add(element);
+                                indexImage++;
+                            }
+
+                            listView.Items.Add(newFileName);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // MessageBox.Show(exception.Message);
+                    }
+                }
+            }
+            button.IsEnabled = true;
+        }
+
+        private void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            if (_lastHour < DateTime.Now.Hour || (_lastHour == 23 && DateTime.Now.Hour == 0))
+            {
+                _lastHour = DateTime.Now.Hour;
+                ExecutingLoadingImagesEveryHour();
+            }
         }
 
         private void LoadExistsImages()
@@ -122,9 +208,7 @@ namespace WallpapersMoveToDesktop
             }
             return foundChilds;
         }
-
-
-
+        
         protected override void OnStateChanged(EventArgs e)
         {
             if (WindowState == System.Windows.WindowState.Minimized)
@@ -135,86 +219,7 @@ namespace WallpapersMoveToDesktop
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            button.IsEnabled = false;
-            listView.Items.Clear();
-
-            var userProfile = System.Environment.GetEnvironmentVariable("USERPROFILE");
-
-            if (userProfile != null)
-            {
-                var sourceDir = string.Format(userProfile + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
-                DirectoryInfo directoryInfo = new DirectoryInfo(sourceDir);
-                FileInfo[] fileInfos = directoryInfo.GetFiles();
-                int indexImage = 0;
-
-
-                foreach (var fileInfo in fileInfos)
-                {
-                    if (!Directory.Exists(_backupDir))
-                    {
-                        Directory.CreateDirectory(_backupDir);
-                    }
-                
-                    try
-                    {
-                        var oldFileName = Path.Combine(sourceDir, fileInfo.Name);
-                        var image = System.Drawing.Image.FromFile(oldFileName);
-
-                        if (image.Height >= 1080 && image.Width >= 1920)
-                        {
-                            var newFileName = Path.Combine(_backupDir, string.Format(fileInfo.Name + ".jpeg"));
-                            if (File.Exists(newFileName) || ContainsImage(image))
-                            {
-                                continue;
-                            }
-                            File.Copy(oldFileName, newFileName);
-                            AddToListExistImages(image);
-
-                            var canvas = FindVisualChildren<Canvas>(groupBox).FirstOrDefault();
-
-                            if (canvas != null)
-                            {
-                                BitmapImage source = new BitmapImage();
-                                source.BeginInit();
-                                source.UriSource = new Uri(newFileName);
-                                source.DecodePixelWidth = 80;
-                                source.DecodePixelHeight = 45;
-                                source.EndInit();
-
-                                var element = new System.Windows.Controls.Image() { Source = source };
-
-                                var left = indexImage * 80 + 1 * (indexImage + 1) - (indexImage / 10) * 81 * 10;
-                                var top = (indexImage / 10) * 45 + 1 * (indexImage / 10 + 1);
-
-                                Canvas.SetLeft(element, left);
-                                Canvas.SetTop(element, top);
-                                
-                                canvas.Children.Add(element);
-                                indexImage++;
-                            }
-                            
-
-                            listView.Items.Add(newFileName);
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                       // MessageBox.Show(exception.Message);
-                    }
-                }
-            }
-            button.IsEnabled = true;
-        }
-
-        private void Button1_OnClick(object sender, RoutedEventArgs e)
-        {
-            Button btn = sender as Button;
-            if (btn != null)
-            {
-                var rotateTransform = btn.RenderTransform as RotateTransform;
-                var transform = new RotateTransform(90 + (rotateTransform?.Angle ?? 0));
-                btn.RenderTransform = transform;
-            }
+            ExecutingLoadingImagesEveryHour();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

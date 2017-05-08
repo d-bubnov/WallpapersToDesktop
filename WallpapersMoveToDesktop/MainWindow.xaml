@@ -21,12 +21,10 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="button1" Content="Rotate" Grid.Column="1" HorizontalAlignment="Left" Margin="0,528,0,0" VerticalAlignment="Top" Width="75" Click="Button1_OnClick" Grid.ColumnSpan="2"/>
         <GroupBox x:Name="groupBox" Header="Загруженные изображения" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3" Height="250" Width="820">
             <Grid HorizontalAlignment="Left" Height="230" Margin="10,10,-2,-12" VerticalAlignment="Top" Width="810" RenderTransformOrigin="0.501,0.167">
                 <Canvas HorizontalAlignment="Left" Height="230" Margin="10,10,0,0" VerticalAlignment="Top" Width="810"/>
             </Grid>
         </GroupBox>
-
     </Grid>
 </Window>
