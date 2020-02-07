@@ -21,7 +21,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <GroupBox x:Name="groupBox" Header="Загруженные изображения" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3" Height="250" Width="820">
+        <GroupBox x:Name="groupBox" Header="Loaded images" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3" Height="250" Width="820">
             <Grid HorizontalAlignment="Left" Height="230" Margin="10,10,-2,-12" VerticalAlignment="Top" Width="810" RenderTransformOrigin="0.501,0.167">
                 <Canvas HorizontalAlignment="Left" Height="230" Margin="10,10,0,0" VerticalAlignment="Top" Width="810"/>
             </Grid>
