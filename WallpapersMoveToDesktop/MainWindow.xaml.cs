@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
+using Image = System.Drawing.Image;
+using Icon = System.Drawing.Icon;
+using Timer = System.Timers.Timer;
+using System.Drawing.Imaging;
+using System.Drawing;
 
 namespace WallpapersMoveToDesktop
 {
@@ -15,10 +21,9 @@ namespace WallpapersMoveToDesktop
     {
         #region Fields and Properties
 
-        private System.Windows.Forms.NotifyIcon _notifyIcon;
+        private NotifyIcon _notifyIcon;
         private List<string> _existsImages = new List<string>();
-        private readonly string _backupDir = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\Wallpapers");
-        private readonly Timer _timer = new Timer(30 * 60 * 1000); // 30 minutes
+        private Timer _timer = new Timer(30 * 60 * 1000); // 30 minutes
         int _lastHour = DateTime.Now.Hour;
 
         #endregion
@@ -35,7 +40,7 @@ namespace WallpapersMoveToDesktop
 
         private void SetIconToMainApplication()
         {
-            _notifyIcon = new System.Windows.Forms.NotifyIcon();
+            _notifyIcon = new NotifyIcon();
             _notifyIcon.Icon = Properties.Resources.ResourceManager.GetObject("ApplicationMainIcon") as Icon;
             _notifyIcon.Visible = true;
             _notifyIcon.DoubleClick += delegate(object sender, EventArgs args)
@@ -50,34 +55,32 @@ namespace WallpapersMoveToDesktop
             button.IsEnabled = false;
             listView.Items.Clear();
 
-            var userProfile = System.Environment.GetEnvironmentVariable("USERPROFILE");
-
-            if (userProfile != null)
+            if (!string.IsNullOrEmpty(EnvVariables.SrcPath))
             {
-                var sourceDir = string.Format(userProfile + @"\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets");
-                DirectoryInfo directoryInfo = new DirectoryInfo(sourceDir);
-                FileInfo[] fileInfos = directoryInfo.GetFiles();
-                int indexImage = 0;
+                // Chech destanation directory (create if not exists)
+                this.ChechDestDirectory();
+                // Get source directory information
+                DirectoryInfo srcDirInfo = new DirectoryInfo(EnvVariables.SrcPath);
+                // get all files from source directory
+                FileInfo[] fileInfos = srcDirInfo.GetFiles();
+                // Index of image on UI
+                int index = 0;
                 
                 foreach (var fileInfo in fileInfos)
                 {
-                    if (!Directory.Exists(_backupDir))
-                    {
-                        Directory.CreateDirectory(_backupDir);
-                    }
-
                     try
                     {
-                        var oldFileName = Path.Combine(sourceDir, fileInfo.Name);
-                        var image = System.Drawing.Image.FromFile(oldFileName);
+                        var oldFileName = Path.Combine(EnvVariables.SrcPath, fileInfo.Name);
+                        var image = Image.FromFile(oldFileName);
 
-                        if (image.Height >= 1080 && image.Width >= 1920)
+                        if (image.Height >= Constants.FullHdHeight && image.Width >= Constants.FullHdWidth)
                         {
-                            var newFileName = Path.Combine(_backupDir, string.Format(fileInfo.Name + ".jpeg"));
+                            var newFileName = Path.Combine(EnvVariables.DestPath, string.Format(fileInfo.Name + ".jpeg"));
                             if (File.Exists(newFileName) || ContainsImage(image))
                             {
                                 continue;
                             }
+
                             File.Copy(oldFileName, newFileName);
                             AddToListExistImages(image);
 
@@ -85,23 +88,14 @@ namespace WallpapersMoveToDesktop
 
                             if (canvas != null)
                             {
-                                BitmapImage source = new BitmapImage();
-                                source.BeginInit();
-                                source.UriSource = new Uri(newFileName);
-                                source.DecodePixelWidth = 80;
-                                source.DecodePixelHeight = 45;
-                                source.EndInit();
+                                BitmapImage bitmapImage = GetThumbnailBitmapImage(newFileName);
+                                var uiElement = new System.Windows.Controls.Image() { Source = bitmapImage };
 
-                                var element = new System.Windows.Controls.Image() { Source = source };
+                                Canvas.SetLeft(uiElement, GetIndentLeft(index));
+                                Canvas.SetTop(uiElement, GetIndentTop(index));
 
-                                var left = indexImage * 80 + 1 * (indexImage + 1) - (indexImage / 10) * 81 * 10;
-                                var top = (indexImage / 10) * 45 + 1 * (indexImage / 10 + 1);
-
-                                Canvas.SetLeft(element, left);
-                                Canvas.SetTop(element, top);
-
-                                canvas.Children.Add(element);
-                                indexImage++;
+                                canvas.Children.Add(uiElement);
+                                index++;
                             }
 
                             listView.Items.Add(newFileName);
@@ -113,7 +107,44 @@ namespace WallpapersMoveToDesktop
                     }
                 }
             }
+
             button.IsEnabled = true;
+        }
+
+        private static int GetIndentTop(int index)
+        {
+            return (index / Constants.ImagesRowCount) * (Constants.ThumbnailHeight + Constants.EmptySpaceLength) + Constants.EmptySpaceLength;
+        }
+
+        private static int GetIndentLeft(int index)
+        {
+            var rowIndentCoeff = (index + 1) % 10 == 0 ? (index + 1) / 10 - 1 : (index + 1) / 10;
+            return index * (Constants.ThumbnailWidth + Constants.EmptySpaceLength) + Constants.EmptySpaceLength
+                - (Constants.ThumbnailWidth + Constants.EmptySpaceLength) * Constants.ImagesRowCount * rowIndentCoeff;
+        }
+
+        private BitmapImage GetThumbnailBitmapImage(string fileName)
+        {
+            BitmapImage thumbnailBitmapImage = new BitmapImage();
+
+            using (var memoryStream = new MemoryStream())
+            {
+                Image thumbnailSource = new Bitmap(fileName);
+                Image thumbnail = thumbnailSource.GetThumbnailImage(
+                    Constants.ThumbnailWidth,
+                    Constants.ThumbnailHeight,
+                    () => false,
+                    IntPtr.Zero);
+                thumbnail.Save(memoryStream, ImageFormat.Bmp);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                thumbnailBitmapImage.BeginInit();
+                thumbnailBitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                thumbnailBitmapImage.StreamSource = memoryStream;
+                thumbnailBitmapImage.EndInit();
+            }
+
+            return thumbnailBitmapImage;
         }
 
         private void OnTimedEvent(object source, ElapsedEventArgs e)
@@ -129,15 +160,15 @@ namespace WallpapersMoveToDesktop
         {
             _existsImages.Clear();
 
-            DirectoryInfo directoryInfo = new DirectoryInfo(_backupDir);
-            FileInfo[] fileInfos = directoryInfo.GetFiles();
+            DirectoryInfo destDirInfo = this.GetDestDirectory();
+            FileInfo[] fileInfos = destDirInfo.GetFiles();
 
             foreach (var fileInfo in fileInfos)
             {
                 try
                 {
-                    var fileName = Path.Combine(_backupDir, fileInfo.Name);
-                    var image = System.Drawing.Image.FromFile(fileName);
+                    var fileName = Path.Combine(EnvVariables.DestPath, fileInfo.Name);
+                    var image = Image.FromFile(fileName);
 
                     using (var memoryStream = new MemoryStream())
                     {
@@ -152,7 +183,21 @@ namespace WallpapersMoveToDesktop
             }
         }
 
-        private void AddToListExistImages(System.Drawing.Image image)
+        private DirectoryInfo GetDestDirectory()
+        {
+            this.ChechDestDirectory();
+            return new DirectoryInfo(EnvVariables.DestPath);
+        }
+
+        private void ChechDestDirectory()
+        {
+            if (!Directory.Exists(EnvVariables.DestPath))
+            {
+                Directory.CreateDirectory(EnvVariables.DestPath);
+            }
+        }
+
+        private void AddToListExistImages(Image image)
         {
             using (var memoryStream = new MemoryStream())
             {
@@ -161,7 +206,7 @@ namespace WallpapersMoveToDesktop
             }
         }
 
-        private bool ContainsImage(System.Drawing.Image originalImage)
+        private bool ContainsImage(Image originalImage)
         {
             using (var memoryStream = new MemoryStream())
             {
@@ -170,20 +215,25 @@ namespace WallpapersMoveToDesktop
                     originalImage.Save(memoryStream, originalImage.RawFormat);
                     var stringImage = Convert.ToBase64String(memoryStream.ToArray());
                     if (!_existsImages.Contains(stringImage))
+                    {
                         return false;
+                    }
                 }
                 catch (Exception)
                 {
                     // ignored
                 }
             }
+
             return true;
         }
 
         public static List<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
         {
             if (parent == null)
+            {
                 return null;
+            }
 
             List<T> foundChilds = new List<T>();
             int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
@@ -206,13 +256,16 @@ namespace WallpapersMoveToDesktop
                     foundChilds.Add((T)child);
                 }
             }
+
             return foundChilds;
         }
         
         protected override void OnStateChanged(EventArgs e)
         {
-            if (WindowState == System.Windows.WindowState.Minimized)
+            if (WindowState == WindowState.Minimized)
+            {
                 this.Hide();
+            }
 
             base.OnStateChanged(e);
         }

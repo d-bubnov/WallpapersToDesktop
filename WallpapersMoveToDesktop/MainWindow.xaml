@@ -5,26 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WallpapersMoveToDesktop"
         mc:Ignorable="d"
-        Title="Move Wallpapers To Desktop" Height="594.117" Width="948.858" Closing="Window_Closing">
-    <Grid Margin="0,0,-8,0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="358*"/>
-            <ColumnDefinition Width="75*"/>
-            <ColumnDefinition Width="556*"/>
-            <ColumnDefinition Width="16*"/>
-        </Grid.ColumnDefinitions>
-        <Button x:Name="button" Content="Import Images" HorizontalAlignment="Left" Margin="10,528,0,0" VerticalAlignment="Top" Width="187" Click="button_Click"/>
-        <ListView x:Name="listView" HorizontalAlignment="Left" Height="200" Margin="10,313,0,0" VerticalAlignment="Top" Width="860" Grid.ColumnSpan="3">
+        Title="Move Microsoft Wallpapers to Galery" Height="698.474" Width="891" Closing="Window_Closing">
+    <Grid Margin="0,0,0,0">
+        <GroupBox x:Name="groupBox" Header="Loaded images" Margin="10,10,10,10" VerticalAlignment="Top">
+            <Grid HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top">
+                <Canvas HorizontalAlignment="Left" Height="231" Margin="10,10,10,10" VerticalAlignment="Top" Width="811" Grid.ColumnSpan="2"/>
+            </Grid>
+        </GroupBox>
+        <ListView x:Name="listView" HorizontalAlignment="Left" Height="233" Margin="10,354,0,0" VerticalAlignment="Top" Width="855">
             <ListView.View>
                 <GridView>
                     <GridViewColumn/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <GroupBox x:Name="groupBox" Header="Loaded images" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3" Height="250" Width="820">
-            <Grid HorizontalAlignment="Left" Height="230" Margin="10,10,-2,-12" VerticalAlignment="Top" Width="810" RenderTransformOrigin="0.501,0.167">
-                <Canvas HorizontalAlignment="Left" Height="230" Margin="10,10,0,0" VerticalAlignment="Top" Width="810"/>
-            </Grid>
-        </GroupBox>
+        <Button x:Name="button" Content="Import Images" HorizontalAlignment="Left" Margin="354,613,0,0" VerticalAlignment="Top" Width="187" Click="button_Click" Height="30" RenderTransformOrigin="0.479,-0.271"/>
+        <Label Content="List of full names of loaded images with path:" HorizontalAlignment="Left" Margin="10,323,0,0" VerticalAlignment="Top" Width="338"/>
     </Grid>
 </Window>
